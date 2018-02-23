@@ -1,6 +1,7 @@
 public class QuickFindUF {
 
     private int[] id;
+    private int[] sz;
 
     public QuickFindUF(int N) {
         id = new int[N];
@@ -43,15 +44,37 @@ public class QuickFindUF {
     /** Despite its name, it is not quick.
      * This is due to the shitty-ish nature of quickUnion.
      */
-    public quickConnected(int p, int q) {
+    public boolean quickConnected(int p, int q) {
         return root(p) == root(q);
     }
 
     /**Finds the root of an item (at index i).
      */
-    private root(int i) {
-        while (i != id[i]) { i = id[i]; }
+    private int root(int i) {
+        while (i != id[i]) { 
+            id[i] = id[id[i]]; // flatten the tree! 'Quck-Union Improvements'
+            i = id[i]; 
+        }
         return i;
     }
 
+    /**How can we deal with these inefficiencies?
+     * We can try to 'balance' our trees a bit, or at least make sure we don't
+     * get ridiculous looking trees.
+     *
+     * We can add a second array to keep track of which 'trees' are bigger.
+     */
+
+    public void quickerUnion(int p, int q) {
+        int i = root(p);
+        int j = root(q);
+        if (i == j) return;
+        if (sz[i] < sz[j]) {
+            id[i] = j;
+            sz[j] += sz[i];
+        } else {
+            id[j] = i;
+            sz[i] += sz[j];
+        }
+    }
 }
